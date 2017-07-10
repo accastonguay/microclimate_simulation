@@ -1,0 +1,965 @@
+<DynaMind>
+	<Info Version="0.5"/>
+<DynaMindCore>
+	<Settings>
+		<EPSG value="32755"/>
+		<WorkingDir value="/tmp/dynamind"/>
+		<KeepSystems value="0"/>
+	</Settings>
+	<Nodes>
+		<RootNode>
+			<UUID value="0"/>
+		</RootNode>
+		<Node>
+			<ClassName value="GDALHotStarter"/>
+			<UUID value="43655776"/>
+			<Name value=""/>
+			<GroupUUID value="0"/>
+			<DebugMode value="0"/>
+			<parameter name="hot_start_database">
+				<![CDATA[../parcel_suitability/Monash/flow_accumulation.sqlite]]>
+			</parameter>
+		</Node>
+		<Node>
+			<ClassName value="GDALAttributeCalculator"/>
+			<UUID value="42591920"/>
+			<Name value="fc902cfe-0002-4127-a1f6-53e8576f1877"/>
+			<GroupUUID value="0"/>
+			<DebugMode value="0"/>
+			<parameter name="attribute">
+				<![CDATA[parcel.garden_area]]>
+			</parameter>
+			<parameter name="attribute_type">
+				<![CDATA[DOUBLE]]>
+			</parameter>
+			<parameter name="equation">
+				<![CDATA[(atot-a) * 0.25]]>
+			</parameter>
+			<parameter name="variables">
+				<![CDATA[a*|*parcel.roof_area*||*atot*|*parcel.area*||*]]>
+			</parameter>
+		</Node>
+		<Node>
+			<ClassName value="GDALImportData"/>
+			<UUID value="47200960"/>
+			<Name value=""/>
+			<GroupUUID value="0"/>
+			<DebugMode value="0"/>
+			<parameter name="source">
+				<![CDATA[../../../../media/sf_windows/SDM374960/waterbodysplite.sqlite]]>
+			</parameter>
+			<parameter name="layer_name">
+				<![CDATA[waterbody]]>
+			</parameter>
+			<parameter name="view_name">
+				<![CDATA[wetland]]>
+			</parameter>
+			<parameter name="import_attribute_as">
+				<![CDATA[]]>
+			</parameter>
+			<parameter name="append">
+				<![CDATA[1]]>
+			</parameter>
+			<parameter name="epsg_from">
+				<![CDATA[4283]]>
+			</parameter>
+			<Filter>
+			<view_name>
+				<![CDATA[]]>
+			</view_name>
+			<attribtue_filter>
+				<![CDATA[]]>
+			</attribtue_filter>
+			<spatial_filter>
+				<![CDATA[city]]>
+			</spatial_filter>
+			</Filter>
+		</Node>
+		<Node>
+			<ClassName value="GDALImportData"/>
+			<UUID value="47227568"/>
+			<Name value=""/>
+			<GroupUUID value="0"/>
+			<DebugMode value="0"/>
+			<parameter name="source">
+				<![CDATA[../../../../media/sf_windows/SDM374960/watercourse_slite.sqlite]]>
+			</parameter>
+			<parameter name="layer_name">
+				<![CDATA[watercourse]]>
+			</parameter>
+			<parameter name="view_name">
+				<![CDATA[waterbody]]>
+			</parameter>
+			<parameter name="import_attribute_as">
+				<![CDATA[]]>
+			</parameter>
+			<parameter name="append">
+				<![CDATA[1]]>
+			</parameter>
+			<parameter name="epsg_from">
+				<![CDATA[4283]]>
+			</parameter>
+			<Filter>
+			<view_name>
+				<![CDATA[]]>
+			</view_name>
+			<attribtue_filter>
+				<![CDATA[]]>
+			</attribtue_filter>
+			<spatial_filter>
+				<![CDATA[city]]>
+			</spatial_filter>
+			</Filter>
+		</Node>
+		<Node>
+			<ClassName value="DMLoopGroup"/>
+			<UUID value="46586672"/>
+			<Name value="extream heat assessment"/>
+			<GroupUUID value="0"/>
+			<DebugMode value="0"/>
+			<parameter name="Runs">
+				<![CDATA[1]]>
+			</parameter>
+			<parameter name="writeStreams">
+				<![CDATA[city*|*]]>
+			</parameter>
+			<parameter name="readStreams">
+				<![CDATA[]]>
+			</parameter>
+		</Node>
+		<Node>
+			<ClassName value="DM_SQliteCalculator"/>
+			<UUID value="25598848"/>
+			<Name value=""/>
+			<GroupUUID value="46586672"/>
+			<DebugMode value="0"/>
+			<parameter name="attribute">
+				<![CDATA[micro_climate_grid.tree_cover_fraction]]>
+			</parameter>
+			<parameter name="attribute_type">
+				<![CDATA[DOUBLE]]>
+			</parameter>
+			<parameter name="query">
+				<![CDATA[UPDATE micro_climate_grid SET tree_cover_fraction= (SELECT sum(AREA(Intersection(micro_climate_grid.Geometry, ST_BUFFER(p.Geometry,5))))/AREA(micro_climate_grid.Geometry)  from tree as p WHERE ST_Intersects(micro_climate_grid.Geometry, ST_BUFFER(p.Geometry,5)) AND p.ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name='tree' AND search_frame=micro_climate_grid.Geometry))]]>
+			</parameter>
+			<parameter name="variables">
+				<![CDATA[]]>
+			</parameter>
+		</Node>
+		<Node>
+			<ClassName value="GDALAttributeCalculator"/>
+			<UUID value="46002240"/>
+			<Name value=""/>
+			<GroupUUID value="46586672"/>
+			<DebugMode value="0"/>
+			<parameter name="attribute">
+				<![CDATA[micro_climate_grid.irrigated_grass_fraction]]>
+			</parameter>
+			<parameter name="attribute_type">
+				<![CDATA[DOUBLE]]>
+			</parameter>
+			<parameter name="equation">
+				<![CDATA[0]]>
+			</parameter>
+			<parameter name="variables">
+				<![CDATA[]]>
+			</parameter>
+		</Node>
+		<Node>
+			<ClassName value="DM_SQliteCalculator"/>
+			<UUID value="51904176"/>
+			<Name value=""/>
+			<GroupUUID value="46586672"/>
+			<DebugMode value="0"/>
+			<parameter name="attribute">
+				<![CDATA[micro_climate_grid.roof_fraction]]>
+			</parameter>
+			<parameter name="attribute_type">
+				<![CDATA[DOUBLE]]>
+			</parameter>
+			<parameter name="query">
+				<![CDATA[UPDATE micro_climate_grid SET roof_fraction= (SELECT sum(AREA(Intersection(micro_climate_grid.Geometry, p.Geometry)))/AREA(micro_climate_grid.Geometry) * p.roof_area / p.area from parcel as p WHERE ST_Intersects(micro_climate_grid.Geometry, p.Geometry) AND p.ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name='parcel' AND search_frame=micro_climate_grid.Geometry))]]>
+			</parameter>
+			<parameter name="variables">
+				<![CDATA[]]>
+			</parameter>
+		</Node>
+		<Node>
+			<ClassName value="DM_SQliteCalculator"/>
+			<UUID value="47327792"/>
+			<Name value="calculate average temperature district"/>
+			<GroupUUID value="46586672"/>
+			<DebugMode value="0"/>
+			<parameter name="attribute">
+				<![CDATA[city.avg_temperature]]>
+			</parameter>
+			<parameter name="attribute_type">
+				<![CDATA[DOUBLE]]>
+			</parameter>
+			<parameter name="query">
+				<![CDATA[UPDATE city SET avg_temperature=(SELECT avg(temperature) from micro_climate_grid)]]>
+			</parameter>
+			<parameter name="variables">
+				<![CDATA[]]>
+			</parameter>
+		</Node>
+		<Node>
+			<ClassName value="GDALAttributeCalculator"/>
+			<UUID value="47322272"/>
+			<Name value=""/>
+			<GroupUUID value="46586672"/>
+			<DebugMode value="0"/>
+			<parameter name="attribute">
+				<![CDATA[micro_climate_grid.grass_fraction]]>
+			</parameter>
+			<parameter name="attribute_type">
+				<![CDATA[DOUBLE]]>
+			</parameter>
+			<parameter name="equation">
+				<![CDATA[0]]>
+			</parameter>
+			<parameter name="variables">
+				<![CDATA[]]>
+			</parameter>
+		</Node>
+		<Node>
+			<ClassName value="DM_SQliteCalculator"/>
+			<UUID value="47757120"/>
+			<Name value=""/>
+			<GroupUUID value="46586672"/>
+			<DebugMode value="0"/>
+			<parameter name="attribute">
+				<![CDATA[building.area]]>
+			</parameter>
+			<parameter name="attribute_type">
+				<![CDATA[DOUBLE]]>
+			</parameter>
+			<parameter name="query">
+				<![CDATA[SELECT CreateSpatialIndex('building','GEOMETRY')]]>
+			</parameter>
+			<parameter name="variables">
+				<![CDATA[]]>
+			</parameter>
+		</Node>
+		<Node>
+			<ClassName value="GDALAttributeCalculator"/>
+			<UUID value="43690704"/>
+			<Name value=""/>
+			<GroupUUID value="46586672"/>
+			<DebugMode value="0"/>
+			<parameter name="attribute">
+				<![CDATA[micro_climate_grid.water_fraction]]>
+			</parameter>
+			<parameter name="attribute_type">
+				<![CDATA[DOUBLE]]>
+			</parameter>
+			<parameter name="equation">
+				<![CDATA[0]]>
+			</parameter>
+			<parameter name="variables">
+				<![CDATA[]]>
+			</parameter>
+		</Node>
+		<Node>
+			<ClassName value="DM_SQliteCalculator"/>
+			<UUID value="43265856"/>
+			<Name value=""/>
+			<GroupUUID value="46586672"/>
+			<DebugMode value="0"/>
+			<parameter name="attribute">
+				<![CDATA[parcel.area]]>
+			</parameter>
+			<parameter name="attribute_type">
+				<![CDATA[INT]]>
+			</parameter>
+			<parameter name="query">
+				<![CDATA[SELECT CreateSpatialIndex('parcel','GEOMETRY')]]>
+			</parameter>
+			<parameter name="variables">
+				<![CDATA[]]>
+			</parameter>
+		</Node>
+		<Node>
+			<ClassName value="GDALAttributeCalculator"/>
+			<UUID value="45502192"/>
+			<Name value=""/>
+			<GroupUUID value="46586672"/>
+			<DebugMode value="0"/>
+			<parameter name="attribute">
+				<![CDATA[micro_climate_grid.concrete_fraction]]>
+			</parameter>
+			<parameter name="attribute_type">
+				<![CDATA[DOUBLE]]>
+			</parameter>
+			<parameter name="equation">
+				<![CDATA[0]]>
+			</parameter>
+			<parameter name="variables">
+				<![CDATA[]]>
+			</parameter>
+		</Node>
+		<Node>
+			<ClassName value="DM_SQliteCalculator"/>
+			<UUID value="45087936"/>
+			<Name value=""/>
+			<GroupUUID value="46586672"/>
+			<DebugMode value="0"/>
+			<parameter name="attribute">
+				<![CDATA[micro_climate_grid.road_fraction]]>
+			</parameter>
+			<parameter name="attribute_type">
+				<![CDATA[DOUBLE]]>
+			</parameter>
+			<parameter name="query">
+				<![CDATA[UPDATE micro_climate_grid SET road_fraction= (SELECT 1-sum(AREA(Intersection(micro_climate_grid.Geometry, b.Geometry)))/AREA(micro_climate_grid.Geometry) from parcel as b  WHERE ST_Intersects(micro_climate_grid.Geometry, b.Geometry) AND b.ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name='parcel' AND search_frame=micro_climate_grid.Geometry))]]>
+			</parameter>
+			<parameter name="variables">
+				<![CDATA[]]>
+			</parameter>
+		</Node>
+		<Node>
+			<ClassName value="GDALAttributeCalculator"/>
+			<UUID value="44211520"/>
+			<Name value=""/>
+			<GroupUUID value="46586672"/>
+			<DebugMode value="0"/>
+			<parameter name="attribute">
+				<![CDATA[micro_climate_grid.road_fraction]]>
+			</parameter>
+			<parameter name="attribute_type">
+				<![CDATA[DOUBLE]]>
+			</parameter>
+			<parameter name="equation">
+				<![CDATA[0]]>
+			</parameter>
+			<parameter name="variables">
+				<![CDATA[]]>
+			</parameter>
+			<Filter>
+			<view_name>
+				<![CDATA[micro_climate_grid]]>
+			</view_name>
+			<attribtue_filter>
+				<![CDATA[road_fraction < 0]]>
+			</attribtue_filter>
+			<spatial_filter>
+				<![CDATA[]]>
+			</spatial_filter>
+			</Filter>
+		</Node>
+		<Node>
+			<ClassName value="DM_SQliteCalculator"/>
+			<UUID value="45028464"/>
+			<Name value=""/>
+			<GroupUUID value="46586672"/>
+			<DebugMode value="0"/>
+			<parameter name="attribute">
+				<![CDATA[micro_climate_grid.concrete_fraction]]>
+			</parameter>
+			<parameter name="attribute_type">
+				<![CDATA[DOUBLE]]>
+			</parameter>
+			<parameter name="query">
+				<![CDATA[UPDATE micro_climate_grid SET concrete_fraction= (SELECT sum(AREA(Intersection(micro_climate_grid.Geometry, p.Geometry)))/AREA(micro_climate_grid.Geometry) * p.outdoor_imp / p.area from parcel as p WHERE ST_Intersects(micro_climate_grid.Geometry, p.Geometry) AND p.ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name='parcel' AND search_frame=micro_climate_grid.Geometry))]]>
+			</parameter>
+			<parameter name="variables">
+				<![CDATA[]]>
+			</parameter>
+		</Node>
+		<Node>
+			<ClassName value="DM_SQliteCalculator"/>
+			<UUID value="43036128"/>
+			<Name value=""/>
+			<GroupUUID value="46586672"/>
+			<DebugMode value="0"/>
+			<parameter name="attribute">
+				<![CDATA[micro_climate_grid.irrigated_grass_fraction]]>
+			</parameter>
+			<parameter name="attribute_type">
+				<![CDATA[DOUBLE]]>
+			</parameter>
+			<parameter name="query">
+				<![CDATA[UPDATE micro_climate_grid SET irrigated_grass_fraction= (SELECT sum(AREA(Intersection(micro_climate_grid.Geometry, p.Geometry)))/AREA(micro_climate_grid.Geometry)  from wetland as p WHERE ST_Intersects(micro_climate_grid.Geometry, p.Geometry) AND p.ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name='wetland' AND search_frame=micro_climate_grid.Geometry))]]>
+			</parameter>
+			<parameter name="variables">
+				<![CDATA[]]>
+			</parameter>
+		</Node>
+		<Node>
+			<ClassName value="DM_SQliteCalculator"/>
+			<UUID value="43689648"/>
+			<Name value=""/>
+			<GroupUUID value="46586672"/>
+			<DebugMode value="0"/>
+			<parameter name="attribute">
+				<![CDATA[micro_climate_grid.irrigated_grass_fraction]]>
+			</parameter>
+			<parameter name="attribute_type">
+				<![CDATA[DOUBLE]]>
+			</parameter>
+			<parameter name="query">
+				<![CDATA[UPDATE micro_climate_grid SET irrigated_grass_fraction= (SELECT sum(AREA(Intersection(micro_climate_grid.Geometry, p.Geometry)))/AREA(micro_climate_grid.Geometry) * p.garden_area / p.area from parcel as p WHERE ST_Intersects(micro_climate_grid.Geometry, p.Geometry) AND p.rwht_id > 0 AND p.ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name='parcel' AND search_frame=micro_climate_grid.Geometry))]]>
+			</parameter>
+			<parameter name="variables">
+				<![CDATA[]]>
+			</parameter>
+		</Node>
+		<Node>
+			<ClassName value="GDALAttributeCalculator"/>
+			<UUID value="42488608"/>
+			<Name value=""/>
+			<GroupUUID value="46586672"/>
+			<DebugMode value="0"/>
+			<parameter name="attribute">
+				<![CDATA[micro_climate_grid.grass_fraction]]>
+			</parameter>
+			<parameter name="attribute_type">
+				<![CDATA[DOUBLE]]>
+			</parameter>
+			<parameter name="equation">
+				<![CDATA[(1 - roof - road - concrete - ig - wb-tf > 0) ? (1 - roof - road - concrete - ig -wb-tf) : 0]]>
+			</parameter>
+			<parameter name="variables">
+				<![CDATA[concrete*|*micro_climate_grid.concrete_fraction*||*ig*|*micro_climate_grid.irrigated_grass_fraction*||*road*|*micro_climate_grid.road_fraction*||*roof*|*micro_climate_grid.roof_fraction*||*tf*|*micro_climate_grid.tree_cover_fraction*||*wb*|*micro_climate_grid.water_fraction*||*]]>
+			</parameter>
+			<Filter>
+			<view_name>
+				<![CDATA[micro_climate_grid]]>
+			</view_name>
+			<attribtue_filter>
+				<![CDATA[]]>
+			</attribtue_filter>
+			<spatial_filter>
+				<![CDATA[]]>
+			</spatial_filter>
+			</Filter>
+		</Node>
+		<Node>
+			<ClassName value="GDALAttributeCalculator"/>
+			<UUID value="43025728"/>
+			<Name value=""/>
+			<GroupUUID value="46586672"/>
+			<DebugMode value="0"/>
+			<parameter name="attribute">
+				<![CDATA[micro_climate_grid.tree_cover_fraction]]>
+			</parameter>
+			<parameter name="attribute_type">
+				<![CDATA[DOUBLE]]>
+			</parameter>
+			<parameter name="equation">
+				<![CDATA[0]]>
+			</parameter>
+			<parameter name="variables">
+				<![CDATA[]]>
+			</parameter>
+		</Node>
+		<Node>
+			<ClassName value="DM_SQliteCalculator"/>
+			<UUID value="42896016"/>
+			<Name value=""/>
+			<GroupUUID value="46586672"/>
+			<DebugMode value="0"/>
+			<parameter name="attribute">
+				<![CDATA[micro_climate_grid.water_fraction]]>
+			</parameter>
+			<parameter name="attribute_type">
+				<![CDATA[DOUBLE]]>
+			</parameter>
+			<parameter name="query">
+				<![CDATA[UPDATE micro_climate_grid SET water_fraction= (SELECT sum(AREA(Intersection(micro_climate_grid.Geometry, p.Geometry)))/AREA(micro_climate_grid.Geometry)  from waterbody as p WHERE ST_Intersects(micro_climate_grid.Geometry, p.Geometry) AND p.ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name='waterbody' AND search_frame=micro_climate_grid.Geometry))]]>
+			</parameter>
+			<parameter name="variables">
+				<![CDATA[]]>
+			</parameter>
+		</Node>
+		<Node>
+			<ClassName value="DM_MicroClimate"/>
+			<UUID value="44885232"/>
+			<Name value=""/>
+			<GroupUUID value="46586672"/>
+			<DebugMode value="0"/>
+			<parameter name="percentile">
+				<![CDATA[80]]>
+			</parameter>
+		</Node>
+		<Node>
+			<ClassName value="DM_CreateGrid"/>
+			<UUID value="47717728"/>
+			<Name value=""/>
+			<GroupUUID value="0"/>
+			<DebugMode value="0"/>
+			<parameter name="lead_view_name">
+				<![CDATA[city]]>
+			</parameter>
+			<parameter name="grid_view_name">
+				<![CDATA[micro_climate_grid]]>
+			</parameter>
+			<parameter name="grid_size">
+				<![CDATA[30]]>
+			</parameter>
+		</Node>
+	</Nodes>
+	<Links>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "47200960"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "42591920"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "47227568"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "47200960"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "43265856"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "47757120"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "43690704"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "43025728"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "47322272"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "43690704"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "46002240"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "47322272"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "45502192"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "46002240"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "45028464"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "51904176"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "44211520"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "45087936"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "42488608"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "44211520"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "44885232"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "42488608"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "47757120"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "45502192"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "47327792"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "44885232"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "43025728"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "46586672"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "46586672"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "47327792"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "42896016"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "45028464"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "25598848"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "42896016"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "45087936"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "25598848"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "43689648"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "43265856"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "43036128"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "43689648"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "51904176"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "43036128"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "46586672"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "47227568"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "42591920"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "47717728"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+		<Link>
+			<BackLink value = "0"/>
+			<InPort>
+				<UUID value = "47717728"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</InPort>
+			<OutPort>
+				<UUID value = "43655776"/>
+				<PortName value = "city"/>
+				<PortType value = "0"/>
+			</OutPort>
+		</Link>
+	</Links>
+</DynaMindCore>
+<DynaMindGUI>
+	<GUI_Nodes>
+		<GUI_Node>
+			<GUI_UUID value="43655776"/>
+			<GUI_PosX value="3.81766e-05"/>
+			<GUI_PosY value="93.5334"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="42591920"/>
+			<GUI_PosX value="1074.25"/>
+			<GUI_PosY value="94.4978"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="47200960"/>
+			<GUI_PosX value="1520.81"/>
+			<GUI_PosY value="58.4987"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="47227568"/>
+			<GUI_PosX value="2014.31"/>
+			<GUI_PosY value="49.9258"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="46586672"/>
+			<GUI_PosX value="2522.25"/>
+			<GUI_PosY value="59.0984"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="25598848"/>
+			<GUI_PosX value="2005.83"/>
+			<GUI_PosY value="1561.67"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="46002240"/>
+			<GUI_PosX value="3158.72"/>
+			<GUI_PosY value="8.754"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="51904176"/>
+			<GUI_PosX value="1969.11"/>
+			<GUI_PosY value="979.983"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="47327792"/>
+			<GUI_PosX value="5371.62"/>
+			<GUI_PosY value="5.79063"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="47322272"/>
+			<GUI_PosX value="2637.65"/>
+			<GUI_PosY value="9.33964"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="47757120"/>
+			<GUI_PosX value="4003.93"/>
+			<GUI_PosY value="25.0094"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="43690704"/>
+			<GUI_PosX value="2382.51"/>
+			<GUI_PosY value="6.979"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="43265856"/>
+			<GUI_PosX value="4510.5"/>
+			<GUI_PosY value="5.087"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="45502192"/>
+			<GUI_PosX value="3570.48"/>
+			<GUI_PosY value="8.895"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="45087936"/>
+			<GUI_PosX value="1994.91"/>
+			<GUI_PosY value="1769.32"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="44211520"/>
+			<GUI_PosX value="4773.16"/>
+			<GUI_PosY value="674.174"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="45028464"/>
+			<GUI_PosX value="1948.97"/>
+			<GUI_PosY value="1190.55"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="43036128"/>
+			<GUI_PosX value="1909.74"/>
+			<GUI_PosY value="484.467"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="43689648"/>
+			<GUI_PosX value="1892.73"/>
+			<GUI_PosY value="235.739"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="42488608"/>
+			<GUI_PosX value="5164.5"/>
+			<GUI_PosY value="337.807"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="43025728"/>
+			<GUI_PosX value="1940.39"/>
+			<GUI_PosY value="3.93886e-46"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="42896016"/>
+			<GUI_PosX value="1938.37"/>
+			<GUI_PosY value="1379.31"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="44885232"/>
+			<GUI_PosX value="4980.37"/>
+			<GUI_PosY value="7.819"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+		<GUI_Node>
+			<GUI_UUID value="47717728"/>
+			<GUI_PosX value="742.779"/>
+			<GUI_PosY value="95.4048"/>
+			<GUI_Minimized value="0"/>
+		</GUI_Node>
+	</GUI_Nodes>
+</DynaMindGUI>
+</DynaMind>
